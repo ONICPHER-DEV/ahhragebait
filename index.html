@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#e51b23">
+<title>🍟 A Very Important Question</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffcc33, #ffec9e);
+    overflow: hidden;
+}
+
+.card {
+    width: 100%;
+    max-width: 420px;
+    padding: 25px 18px;
+    text-align: center;
+    background: white;
+    border: 5px solid #e51b23;
+    border-radius: 25px;
+    box-shadow: 0 12px 35px #8b242440;
+    position: relative;
+    z-index: 2;
+}
+
+.logo {
+    font-size: 50px;
+}
+
+h1 {
+    font-size: 27px;
+    color: #e51b23;
+    margin: 8px 0;
+}
+
+p {
+    color: #444;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.offer {
+    background: #fff2bf;
+    color: #922020;
+    padding: 14px 8px;
+    border-radius: 14px;
+    font-weight: bold;
+    line-height: 1.8;
+    margin: 16px 0;
+}
+
+.play-area {
+    position: relative;
+    height: 100px;
+    margin-top: 15px;
+    border-radius: 15px;
+    background: #fff8e7;
+    overflow: hidden;
+    touch-action: pan-y;
+}
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 13px 17px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+#yes {
+    position: absolute;
+    left: 12px;
+    top: 25px;
+    background: #e51b23;
+    color: white;
+    box-shadow: 0 4px 0 #a50d13;
+    white-space: nowrap;
+    transition: left 0.13s ease-out, top 0.13s ease-out;
+    z-index: 3;
+}
+
+#no {
+    position: absolute;
+    right: 12px;
+    top: 25px;
+    background: #ffca28;
+    color: #222;
+    box-shadow: 0 4px 0 #d5a000;
+    z-index: 2;
+}
+
+#message, #reveal {
+    display: none;
+    margin-top: 16px;
+    padding: 15px;
+    border-radius: 14px;
+    line-height: 1.6;
+    font-weight: bold;
+}
+
+#message {
+    color: #b5121b;
+    background: #fff0f0;
+}
+
+#reveal {
+    color: #17692a;
+    background: #e6ffe9;
+}
+
+#reveal button {
+    margin-top: 12px;
+    background: #168d39;
+    color: white;
+}
+
+.hint {
+    color: #888;
+    font-size: 12px;
+    margin-top: 18px;
+}
+
+.floating {
+    position: fixed;
+    bottom: -45px;
+    pointer-events: none;
+    z-index: 1;
+    animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+    from {
+        transform: translateY(0) rotate(0);
+        opacity: 0.9;
+    }
+    to {
+        transform: translateY(-115vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 360px) {
+    .card {
+        padding: 20px 12px;
+    }
+
+    h1 {
+        font-size: 23px;
+    }
+
+    .play-area {
+        height: 105px;
+    }
+
+    button {
+        padding: 12px 13px;
+        font-size: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #yes {
+        transition: none;
+    }
+
+    .floating {
+        animation-duration: 12s;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<main class="card" id="card">
+    <div class="logo">🍟🍔</div>
+
+    <h1>HEY YOU!! 👀</h1>
+
+    <p>
+        I have a VERY important question.
+        Please consider your answer carefully. 🥹
+    </p>
+
+    <div class="offer">
+        🍔 MCDONALD'S DATE 🍟<br>
+        YOUR FOOD = FREE! 👑<br>
+        THE BILL = MY PROBLEM 💸
+    </div>
+
+    <p>Wanna go to McDonald's with me? ❤️</p>
+
+    <div class="play-area" id="playArea">
+        <button id="yes">YES! 😍</button>
+        <button id="no">NO 😭</button>
+    </div>
+
+    <div id="message" aria-live="polite"></div>
+
+    <div id="reveal" aria-live="polite">
+        🎉 YOU HAVE BEEN TROLLED! 🎉<br><br>
+        BROOO THE YES BUTTON WAS RUNNING FOR ITS LIFE. 💀🍟
+        <br><br>
+        Thanks for participating in this extremely
+        unnecessary investigation. 😂
+        <br>
+        <button id="restart">TROLL AGAIN 🔄</button>
+    </div>
+
+    <div class="hint">
+        McDonald's invitation department™
+    </div>
+</main>
+
+<script>
+const yes = document.getElementById("yes");
+const no = document.getElementById("no");
+const playArea = document.getElementById("playArea");
+const message = document.getElementById("message");
+const reveal = document.getElementById("reveal");
+const restart = document.getElementById("restart");
+
+let attempts = 0;
+let noClicks = 0;
+let revealed = false;
+
+const reactions = [
+    "WAIT WHY ARE YOU PRESSING NO?! 😭",
+    "FREE FOOD AND YOU STILL SAID NO?! 🍔💀",
+    "MY IMAGINARY WALLET WAS READY. 💸",
+    "THE FRENCH FRIES ARE DISAPPOINTED IN YOU. 🍟",
+    "EVEN THE ICE CREAM MACHINE IS WORKING FOR THIS. 😭"
+];
+
+function moveYes() {
+    if (revealed) return;
+
+    attempts++;
+
+    const area = playArea.getBoundingClientRect();
+    const button = yes.getBoundingClientRect();
+
+    const maxX = Math.max(0, area.width - button.width);
+    const maxY = Math.max(0, area.height - button.height);
+
+    let x = Math.random() * maxX;
+    let y = Math.random() * maxY;
+
+    // Avoid repeatedly selecting almost the same position.
+    const currentX = parseFloat(yes.style.left) || 12;
+    const currentY = parseFloat(yes.style.top) || 25;
+
+    if (Math.abs(x - currentX) < 35 &&
+        Math.abs(y - currentY) < 25) {
+        x = maxX - x;
+        y = maxY - y;
+    }
+
+    yes.style.left = x + "px";
+    yes.style.top = y + "px";
+
+    if (attempts < 3) {
+        yes.textContent = "CATCH ME! 💨";
+    } else if (attempts < 6) {
+        yes.textContent = "TOO SLOW 😂";
+    } else {
+        yes.textContent = "NICE TRY 💀";
+    }
+}
+
+// On computers, the button dodges the mouse.
+yes.addEventListener("pointerenter", function(event) {
+    if (event.pointerType === "mouse") {
+        moveYes();
+    }
+});
+
+// On phones, tapping the button makes it escape.
+yes.addEventListener("click", function(event) {
+    event.preventDefault();
+    moveYes();
+});
+
+// The NO button actually works.
+no.addEventListener("click", function() {
+    if (revealed) return;
+
+    noClicks++;
+    message.style.display = "block";
+
+    const index = Math.min(noClicks - 1, reactions.length - 1);
+    message.textContent = reactions[index];
+
+    if (noClicks >= 3) {
+        revealed = true;
+        reveal.style.display = "block";
+        yes.style.display = "none";
+        no.style.display = "none";
+        playArea.style.display = "none";
+    }
+});
+
+restart.addEventListener("click", function() {
+    attempts = 0;
+    noClicks = 0;
+    revealed = false;
+
+    message.style.display = "none";
+    reveal.style.display = "none";
+    playArea.style.display = "block";
+
+    yes.style.display = "block";
+    no.style.display = "block";
+
+    yes.textContent = "YES! 😍";
+    yes.style.left = "12px";
+    yes.style.top = "25px";
+});
+
+// Floating emojis, with a limited number on screen.
+const emojis = ["🍟", "🍔", "❤️", "💛", "🍟", "🍔"];
+let emojiCount = 0;
+
+function createEmoji() {
+    if (emojiCount >= 15) return;
+
+    const emoji = document.createElement("div");
+    emoji.className = "floating";
+    emoji.textContent = emojis[
+        Math.floor(Math.random() * emojis.length)
+    ];
+
+    emoji.style.left = Math.random() * 95 + "vw";
+    emoji.style.fontSize = (18 + Math.random() * 14) + "px";
+
+    const duration = 5 + Math.random() * 4;
+    emoji.style.animationDuration = duration + "s";
+
+    document.body.appendChild(emoji);
+    emojiCount++;
+
+    emoji.addEventListener("animationend", function() {
+        emoji.remove();
+        emojiCount--;
+    });
+}
+
+setInterval(createEmoji, 650);
+</script>
+
+</body>
+</html>
